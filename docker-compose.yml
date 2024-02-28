@@ -1,0 +1,35 @@
+version: '3.5'
+
+networks:
+  proxy-network:
+    driver: bridge
+
+services:
+  proxy:
+    networks:
+      - proxy-network
+    build: ./proxy/
+    ports:
+      - 8080:8080
+    depends_on:
+      - mongo
+
+  api:
+    networks:
+      - proxy-network
+    build: ./api/
+    ports:
+      - 8000:8000
+    depends_on:
+      - mongo
+
+  mongo:
+    image: mongo:latest
+    networks:
+      - proxy-network
+    environment:
+      - MONGO_INITDB_ROOT_USERNAME=admin
+      - MONGO_INITDB_ROOT_PASSWORD=admin
+      - MONGO_INITDB_DATABASE=test
+    ports:
+      - 27017:27017
